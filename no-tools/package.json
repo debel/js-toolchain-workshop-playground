@@ -1,0 +1,12 @@
+{
+  "name": "no-tools-demo",
+  "version": "1.0.0",
+  "description": "a simple personal blog built intentionally without tools",
+  "license": "ISC",
+  "author": "Mihail Mikov",
+  "type": "esm",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
