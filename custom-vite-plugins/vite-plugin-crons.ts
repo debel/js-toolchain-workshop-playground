@@ -6,7 +6,7 @@ import { Plugin, ResolvedConfig } from 'vite';
 import { writeFileSync, mkdirSync } from 'fs';
 import { resolve, join, basename } from 'path';
 import { glob } from 'glob';
-import { parseExpression } from 'cron-parser';
+import { CronExpressionParser } from 'cron-parser';
 import { build } from 'vite';
 
 interface WorkflowPluginOptions {
@@ -64,9 +64,9 @@ export function workflow(options: WorkflowPluginOptions = {}): Plugin {
 
           // Validate cron expression
           try {
-            parseExpression(module.schedule);
+            CronExpressionParser.parse(module.schedule);
           } catch (err) {
-            console.warn(`⚠️  Workflow ${filePath} has invalid cron expression: "${module.schedule}". Skipping.`);
+            console.warn(`⚠️  Workflow ${filePath} has invalid cron expression: "${module.schedule}". Error: ${err}. Skipping.`);
             continue;
           }
 
@@ -119,7 +119,8 @@ export function workflow(options: WorkflowPluginOptions = {}): Plugin {
                 external: [], // Include all dependencies
                 output: {
                   banner: '#!/usr/bin/env node',
-                  sourcemap: true
+                  sourcemap: true,
+                  footer: `${workflow.name}_workflow()`,
                 }
               },
               emptyOutDir: false,
@@ -128,7 +129,7 @@ export function workflow(options: WorkflowPluginOptions = {}): Plugin {
             logLevel: 'warn'
           });
 
-          console.log(`✓ Built workflow: ${workflow.name}.mjs`);
+          console.log(`✓ Built workflow: ${workflow.name}.js`);
         } catch (err) {
           console.warn(`⚠️  Failed to build workflow ${workflow.name}:`, err);
         }
@@ -142,7 +143,7 @@ export function workflow(options: WorkflowPluginOptions = {}): Plugin {
       ];
 
       for (const workflow of workflows) {
-        const scriptPath = `${pathPlaceholder}/${workflow.name}.mjs`;
+        const scriptPath = `${pathPlaceholder}/${workflow.name}.js`;
         const logPath = `${pathPlaceholder}/logs/${workflow.name}.log`;
         crontabLines.push(
           `${workflow.schedule} ${scriptPath} >> ${logPath} 2>&1`

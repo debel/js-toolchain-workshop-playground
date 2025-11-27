@@ -1,4 +1,5 @@
 // This module is shared by all posts
+
 import './style.css'
 
 const menuEl = document.querySelector('#menu');
