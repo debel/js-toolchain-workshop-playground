@@ -1,0 +1,13 @@
+const menuEl = document.querySelector('#menu');
+
+if (menuEl) {
+  menuEl.innerHTML =
+    `
+    <menu>
+      <li><a href="/">home</a></li>
+      <li><a href="/posts/first.html">first</a></li>
+      <li><a href="/posts/second.html">second</a></li>
+      <li><a href="/posts/third.html">third</a></li>
+    </menu>
+  `
+}
